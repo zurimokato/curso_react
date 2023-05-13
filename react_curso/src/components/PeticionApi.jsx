@@ -30,7 +30,7 @@ const PeticionApi = () => {
         <button onClick={atras}>Atrás</button>
         {
             personajes.map(({id,name,image})=>(
-                <div>
+                <div key={id}>
                     <h4>{id} -  {name}</h4>
                     <img src={image} alt={name} />
                 </div>
