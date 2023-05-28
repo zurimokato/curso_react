@@ -1,43 +1,70 @@
-import React from 'react'
+import React from "react";
 
 const PeticionApi = () => {
-    const [personajes,setPersonajes]=React.useState([]);
-    const [paginacion, setPaginacion]=React.useState(0);
+  const [personajes, setPersonajes] = React.useState([]);
+  const [paginacion, setPaginacion] = React.useState(1);
 
-    const obtenerPersonajes=async()=>{
-        const res=await fetch( `https://rickandmortyapi.com/api/character/?page=${paginacion}`);
-        const {results}= await res.json();
-        setPersonajes(results);
-        console.log(personajes);
+  const cargarDetalles=async()=>{
+    const res = await fetch(`https://api.fbi.gov/wanted/v1/list?page=${paginacion}`);
+      const  results  = await res.json();
+      const data=results.items;
+      console.log(data);
+      setPersonajes(data);
+  }
 
+  const traerPersonajes = async () => {
+    try {
+        
+        const detalles=[];
+      
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/?offset=${paginacion}&limit=20`);
+      const  results  = await res.json();
+    /*  const data=results.results;
+      for(const element of data){
+        console.log(element);
+        const res = await fetch(element.url);
+        const pokemon=await res.json();
+        detalles.push(pokemon)
+      }
+      setPersonajes(detalles);*/
+      cargarDetalles()
+
+    } catch (error) {
+      console.log(error);
     }
+  };
+  
+  const siguiente = ()=> {
+    setPaginacion( paginacion + 20)
+    traerPersonajes()
+  }
 
-    const adelante=()=>{
-        setPaginacion(paginacion+1);
-        obtenerPersonajes();
-    }
+  const atras = () => {
+    setPaginacion( paginacion - 20)
+    traerPersonajes()
+  }
 
-    const atras=()=>{
-        setPaginacion(paginacion-1);
-        obtenerPersonajes();
-    }
   return (
     <div>
-        <h1>Petición al api de rick and morty</h1>
-        <button onClick={obtenerPersonajes}>Traer Personaje</button>
-        <button onClick={adelante}>Siguiente</button>
-        <button onClick={atras}>Atrás</button>
-        {
-            personajes.map(({id,name,image})=>(
-                <div key={id}>
-                    <h4>{id} -  {name}</h4>
-                    <img src={image} alt={name} />
-                </div>
-            ))
-        
-        }
+      <h1>FBI MOSTWANTED</h1>
+      <button onClick={traerPersonajes}>Traer personajes</button>
+      <button onClick={atras}>Atras</button>
+      <button onClick={siguiente}>Siguiente</button>
+      
+      {
+        personajes.map(({url,title,description, images}) => (
+            <div key={url}>
+                <h4> {title}  </h4>
+                <img src={images[0].original} alt={title} />
+                <p>{description}</p>
+            </div>
+        ))
+      }
+
+
+      
     </div>
   )
 }
 
-export default PeticionApi
+export default PeticionApi;
